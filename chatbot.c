@@ -3,6 +3,40 @@
 #include <stdlib.h>
 #include <time.h>
 
+// Function to calculate Levenshtein distance
+int levenshtein(const char *s1, const char *s2) {
+    int len1 = strlen(s1);
+    int len2 = strlen(s2);
+    int cost = 0;
+
+    if (len1 == 0) return len2;
+    if (len2 == 0) return len1;
+
+    int *d = (int *)malloc((len1 + 1) * sizeof(int));
+
+    for (int i = 0; i <= len1; i++) d[i] = i;
+
+    for (int j = 1; j <= len2; j++) {
+        int prev = j;
+        for (int i = 1; i <= len1; i++) {
+            int temp = d[i - 1];
+            d[i - 1] = prev;
+
+            if (s1[i - 1] != s2[j - 1]) {
+                cost = 1;
+            }
+
+            prev = (prev < d[i] ? (prev < temp ? prev : temp) : (d[i] < temp ? d[i] : temp)) + cost;
+            cost = 0;
+        }
+        d[len1] = prev;
+    }
+
+    int result = d[len1];
+    free(d);
+    return result;
+}
+
 int main() {
     char userInput[100];
     srand(time(NULL));
@@ -16,41 +50,32 @@ int main() {
         // Remove the newline character at the end of the input
         userInput[strcspn(userInput, "\n")] = '\0';
 
-        if (strstr(userInput, "hello") || strstr(userInput, "hi")) {
-            const char *greetings[] = {
-                "Hi there!",
-                "Hello!",
-                "Greetings!",
-                "Hey!"
-            };
-            int randomIndex = rand() % (sizeof(greetings) / sizeof(greetings[0]));
-            printf("Stupid Chatbot: %s\n", greetings[randomIndex]);
-        } else if (strstr(userInput, "how are you")) {
-            const char *feelings[] = {
-                "I'm just a computer program, so I don't have feelings.",
-                "I'm here to assist you, so I'm doing well!",
-                "I'm as good as the code that powers me!"
-            };
-            int randomIndex = rand() % (sizeof(feelings) / sizeof(feelings[0]));
-            printf("Stupid Chatbot: %s\n", feelings[randomIndex]);
-        } else if (strstr(userInput, "what is your name")) {
-            const char *names[] = {
-                "I don't have a name. You can call me Chatbot!",
-                "I go by Chatbot. How can I help you today?",
-                "I'm just Chatbot, here to assist you!"
-            };
-            int randomIndex = rand() % (sizeof(names) / sizeof(names[0]));
-            printf("Stupid Chatbot: %s\n", names[randomIndex]);
-        } else if (strstr(userInput, "exit") || strstr(userInput, "bye")) {
-            const char *goodbyes[] = {
-                "Goodbye!",
-                "Farewell!",
-                "See you later!",
-                "Adios!"
-            };
-            int randomIndex = rand() % (sizeof(goodbyes) / sizeof(goodbyes[0]));
-            printf("Stupid Chatbot: %s\n", goodbyes[randomIndex]);
-            break;
+        const char *responses[] = {
+            "Hi there!",
+            "Hello!",
+            "Greetings!",
+            "Hey!",
+            "I'm just a computer program, so I don't have feelings.",
+            "I'm here to assist you, so I'm doing well!",
+            "I'm as good as the code that powers me!",
+            "I don't have a name. You can call me Chatbot!",
+            "I go by Chatbot. How can I help you today?",
+            "I'm just Chatbot, here to assist you!"
+        };
+
+        int minDistance = strlen(userInput) + 1;
+        int bestResponseIndex = -1;
+
+        for (int i = 0; i < sizeof(responses) / sizeof(responses[0]); i++) {
+            int distance = levenshtein(userInput, responses[i]);
+            if (distance < minDistance) {
+                minDistance = distance;
+                bestResponseIndex = i;
+            }
+        }
+
+        if (bestResponseIndex != -1) {
+            printf("Stupid Chatbot: %s\n", responses[bestResponseIndex]);
         } else {
             const char *unknownResponses[] = {
                 "Sorry, I don't understand. Can you please rephrase?",
