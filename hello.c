@@ -2,7 +2,8 @@
 
 int main(void)
 {
-    int x = 0;
+    int x;
+    x = 0;
     do
     {
         printf("hello world \n");
