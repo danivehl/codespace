@@ -1,12 +1,15 @@
 #include <stdio.h>
+#include <unistd.h> // Include the header for the sleep function
 
 int main(void)
 {
-    int x = 0;
+    int x;
+    x = 0;
     do
     {
         printf("hello world \n");
-        x = x + 1; // Corrected the assignment statement
+        x = x + 1;
+        sleep(1); // Add a one-second delay
     }
-    while (x < 500);
+    while (x < 5);
 }
