@@ -2,12 +2,11 @@
 
 int main(void)
 {
-    int x;
-    x = 0;
+    int x = 0;
     do
     {
         printf("hello world \n");
-        int x + 1;
+        x = x + 1; // Corrected the assignment statement
     }
-    while (x<5);
+    while (x < 500);
 }
